@@ -13,16 +13,13 @@ import re
 from datetime import datetime
 import pprint
 
-with open(r'C:\Users\aussi\Documents\Coding Portfolio\2022 Power BI\Spotify\my_spotify_data\MyData\Playlist1.json', encoding = 'utf8') as j:
+with open(r'File_Location', encoding = 'utf8') as j:
     playlist_dict = json.loads(j.read())
-streaming_0 = pd.read_json(r'C:\Users\aussi\Documents\Coding Portfolio\2022 Power BI\Spotify\my_spotify_data\MyData\StreamingHistory0.json')
-streaming_1 = pd.read_json(r'C:\Users\aussi\Documents\Coding Portfolio\2022 Power BI\Spotify\my_spotify_data\MyData\StreamingHistory1.json')
+streaming_0 = pd.read_json(r'File_Location')
+streaming_1 = pd.read_json(r'File_Location')
 streaming = pd.concat([streaming_0, streaming_1], axis = 0, join = "outer")
 streaming["combinedArtistSong"] = streaming["trackName"] + " - " + streaming["artistName"]
 streaming = streaming.reset_index(drop=True)
-
-
-#user_data = pd.read_json(r'C:\Users\aussi\Documents\Coding Portfolio\2022 Power BI\Spotify\my_spotify_data\MyData\Userdata.json')
 
 #Rearranging playlist dictionary
 
@@ -48,8 +45,8 @@ playlist_songs = playlist_songs.dropna()
 playlist_songs = playlist_songs.reset_index(drop=True)
 
 #Authentication
-client_id = '70a1fcf27c494e489c063c6572c65efb'
-client_secret = '5c2de8d86d834ea79a713acd43c96705'
+client_id = 'XXXXXXX'
+client_secret = 'XXXXXXX'
 username = "griffin_sleigh"
 scope = "user-read-currently-playing user-read-recently-played"
 redirect_uri = "http://localhost:8888/callback/"
@@ -103,8 +100,6 @@ streaming_grouped = streaming_grouped.reset_index(drop=True)
 start_time = time.time()
 token = util.prompt_for_user_token(username, scope, client_id = client_id, client_secret = client_secret, redirect_uri = redirect_uri)
 sp = spotipy.Spotify(auth=token)
-
-#TODO Songs with apostrophes not working
 
 uri_df = pd.DataFrame([])
 for song in range(len(streaming_grouped)):
@@ -164,15 +159,14 @@ import spotipy
 import spotipy.util as util
 
 #Authentication
-client_id = '70a1fcf27c494e489c063c6572c65efb'
-client_secret = '5c2de8d86d834ea79a713acd43c96705'
+client_id = 'XXXXXXX'
+client_secret = 'XXXXXXX'
 username = "griffin_sleigh"
 scope = "user-read-currently-playing user-read-recently-played"
 redirect_uri = "http://localhost:8888/callback/"
 
 token = util.prompt_for_user_token(username, scope, client_id = client_id, client_secret = client_secret, redirect_uri = redirect_uri)
 sp = spotipy.Spotify(auth=token)
-
 
 try:
     currently_playing = sp.currently_playing()
@@ -193,7 +187,7 @@ except:
 
 
 #Connecting to MySQL to export
-sqlEngine = sqlalchemy.create_engine('mysql+pymysql://root@localhost/spotify_db')
+sqlEngine = sqlalchemy.create_engine('XXXXXXX')
 dbConnection = sqlEngine.connect()
 frame = streaming_grouped.to_sql("streaming", dbConnection, if_exists='replace', index=False)
 frame_2 = playlist_songs.to_sql("playlist_songs", dbConnection, if_exists='replace', index=False)
@@ -205,7 +199,7 @@ print((time.time() - start_time)/60)
 
 import mysql.connector as connection
 try:
-    mydb = connection.connect(host="localhost", database = 'spotify_db',user="root", passwd="",use_pure=True)
+    mydb = connection.connect(host="XXXXXXX", database = 'XXXXXXX',user="XXXXXXX", passwd="XXXXXXX",use_pure=True)
     query = "Select * from streaming;"
     streaming_grouped = pd.read_sql(query,mydb)
     query = "Select * from playlist_songs;"
@@ -214,23 +208,7 @@ try:
 except Exception as e:
     mydb.close()
     print(str(e))
-
-# #EXPORT TO GOOGLE CLOUD
-#
-# from google.cloud import storage
-# import os
-# import pandas as pd
-#
-# # Only need this if you're running this code locally.
-# dfs_for_gcp = [misc_info, playlist_songs, streaming_grouped]
-#
-# for df in dfs_for_gcp:
-#     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'C:/Users/aussi/Documents/Coding Portfolio/2022 Power BI/Spotify/spotify-dashboard-343907-f0a240a501ab.json'
-#     client = storage.Client()
-#     bucket = client.get_bucket('spotify_db')
-#     df_str = df.name
-#     bucket.blob({'{}.csv'.format(df_str).upload_from_string(df.to_csv(), 'text/csv')
-
+    
 #PREDICTION FOR WITHIN THE DASHBOARD
 
 from sklearn import preprocessing
